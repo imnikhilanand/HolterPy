@@ -31,7 +31,10 @@ class holterpy:
         self.mov_avg = [self.avg_data if math.isnan(x) else x for x in self.mov_avg]
         self.mov_avg = [x*1.2 for x in self.mov_avg]
         self.csv_file_pd_df['rolling_mean'] = self.mov_avg
-        self.data_np_df = self.csv_file_pd_df.iloc[0:,0:2].values
+        self.temp_series = np.arange(0,len(self.csv_file_pd_df)-1,1,np.int)
+        self.pd_series_ind = pd.Series(self.temp_series)
+        self.csv_file_pd_df['index'] = self.pd_series_ind
+        self.data_np_df = self.csv_file_pd_df.iloc[0:,0:3].values
 
     #to get r-peaks in the ECG data
     def get_R_val(self):
@@ -57,9 +60,14 @@ class holterpy:
         return self.final_arr_R_values            
         
     #to get R-peaks on the plot
-    def plot_R_peaks(self):
-        self.get_R_np_arr = np.array(self.final_arr_R_values)
-        plt.plot(self.data_np_df[0:,0])
+    def plot_R_peaks(self, final_arr_R_values, lower_bound=0, upper_bound=0):
+        self.temp_array_bw_bounds = []
+        for i in range(0,len(final_arr_R_values)):
+            if final_arr_R_values[i][0] < upper_bound and final_arr_R_values[i][0] > lower_bound:
+                self.temp_array_bw_bounds.append([final_arr_R_values[i][0],final_arr_R_values[i][1]])
+            
+        self.get_R_np_arr = np.array(self.temp_array_bw_bounds)
+        plt.plot(self.data_np_df[lower_bound:upper_bound,2],self.data_np_df[lower_bound:upper_bound,0])
         plt.scatter(self.get_R_np_arr[0:,0],self.get_R_np_arr[0:,1],color='red')    
         plt.show()
         
@@ -80,9 +88,14 @@ class holterpy:
         return self.final_arr_P_values
 
     #to get P-peaks on the plot
-    def plot_P_peaks(self):
-        self.get_P_np_arr = np.array(self.final_arr_P_values)
-        plt.plot(self.data_np_df[0:,0])
+    def plot_P_peaks(self,final_arr_P_values,lower_bound=0, upper_bound=0):
+        self.temp_array_bw_bounds = []
+        for i in range(0,len(final_arr_P_values)):
+            if final_arr_P_values[i][0] < upper_bound and final_arr_P_values[i][0] > lower_bound:
+                self.temp_array_bw_bounds.append([final_arr_P_values[i][0],final_arr_P_values[i][1]])
+                
+        self.get_P_np_arr = np.array(self.temp_array_bw_bounds)
+        plt.plot(self.data_np_df[lower_bound:upper_bound,2],self.data_np_df[lower_bound:upper_bound,0])
         plt.scatter(self.get_P_np_arr[0:,0],self.get_P_np_arr[0:,1],color='green')    
         plt.show()
 
@@ -102,9 +115,14 @@ class holterpy:
        
         return self.final_arr_T_values
     
-    def plot_T_peaks(self):
-        self.get_T_np_arr = np.array(self.final_arr_T_values)
-        plt.plot(self.data_np_df[0:,0])
+    def plot_T_peaks(self,final_arr_T_values,lower_bound=0, upper_bound=0):
+        self.temp_array_bw_bounds = []
+        for i in range(0,len(final_arr_T_values)):
+            if final_arr_T_values[i][0] < upper_bound and final_arr_T_values[i][0] > lower_bound:
+                self.temp_array_bw_bounds.append([final_arr_T_values[i][0],final_arr_T_values[i][1]])
+                
+        self.get_T_np_arr = np.array(self.temp_array_bw_bounds)
+        plt.plot(self.data_np_df[lower_bound:upper_bound,2],self.data_np_df[lower_bound:upper_bound,0])
         plt.scatter(self.get_T_np_arr[0:,0],self.get_T_np_arr[0:,1],color='yellow')    
         plt.show()
     
@@ -123,6 +141,7 @@ class holterpy:
         
 """HolterPy class ends here
 """
+
 
 
   
